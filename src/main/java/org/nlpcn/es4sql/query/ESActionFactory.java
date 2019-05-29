@@ -9,8 +9,8 @@ import com.alibaba.druid.sql.ast.statement.SQLUnionQuery;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlSelectQueryBlock;
 import com.alibaba.druid.sql.parser.*;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.plugin.nlpcn.ElasticResultHandler;
-import org.elasticsearch.plugin.nlpcn.QueryActionElasticExecutor;
+//import org.elasticsearch.plugin.nlpcn.ElasticResultHandler;
+//import org.elasticsearch.plugin.nlpcn.QueryActionElasticExecutor;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.nlpcn.es4sql.domain.Delete;
@@ -47,21 +47,21 @@ public class ESActionFactory {
 				SQLQueryExpr sqlExpr = (SQLQueryExpr) toSqlExpr(sql);
                 if(isMulti(sqlExpr)){//zhongshu-comment 判断是不是union查询，union查询两个select语句，btw：子查询也有多个select语句，至少2个
                     MultiQuerySelect multiSelect = new SqlParser().parseMultiSelect((SQLUnionQuery) sqlExpr.getSubQuery().getQuery());
-                    handleSubQueries(client,multiSelect.getFirstSelect());
-                    handleSubQueries(client,multiSelect.getSecondSelect());
+                   // handleSubQueries(client,multiSelect.getFirstSelect());
+                   // handleSubQueries(client,multiSelect.getSecondSelect());
                     return new MultiQueryAction(client, multiSelect);
                 }
                 else if(isJoin(sqlExpr,sql)){//zhongshu-comment join连接查询
                     JoinSelect joinSelect = new SqlParser().parseJoinSelect(sqlExpr);
-                    handleSubQueries(client, joinSelect.getFirstTable());
-                    handleSubQueries(client, joinSelect.getSecondTable());
+                   // handleSubQueries(client, joinSelect.getFirstTable());
+                   // handleSubQueries(client, joinSelect.getSecondTable());
                     return ESJoinQueryActionFactory.createJoinAction(client, joinSelect);
                 }
                 else {
                     //zhongshu-comment 大部分查询都是走这个分支，先看懂这个分支
                     Select select = new SqlParser().parseSelect(sqlExpr);
                     //todo 看不懂，测试了好几个常见的sql，都没有进去handleSubQueries该方法，那就先不理了，看别的
-                    handleSubQueries(client, select);
+                   // handleSubQueries(client, select);
                     return handleSelect(client, select);
                 }
 			case "DELETE":
@@ -80,7 +80,7 @@ public class ESActionFactory {
         return sqlExpr.getSubQuery().getQuery() instanceof SQLUnionQuery;
     }
 
-    private static void handleSubQueries(Client client, Select select) throws SqlParseException {
+    /*private static void handleSubQueries(Client client, Select select) throws SqlParseException {
         if (select.containsSubQueries())
         {
             for(SubQueryExpression subQueryExpression : select.getSubQueries()){
@@ -88,9 +88,9 @@ public class ESActionFactory {
                 executeAndFillSubQuery(client , subQueryExpression,queryAction);
             }
         }
-    }
+    }*/
 
-    private static void executeAndFillSubQuery(Client client , SubQueryExpression subQueryExpression,QueryAction queryAction) throws SqlParseException {
+    /*private static void executeAndFillSubQuery(Client client , SubQueryExpression subQueryExpression,QueryAction queryAction) throws SqlParseException {
         List<Object> values = new ArrayList<>();
         Object queryResult;
         try {
@@ -110,7 +110,7 @@ public class ESActionFactory {
             throw new SqlParseException("on sub queries only support queries that return Hits and not aggregations");
         }
         subQueryExpression.setValues(values.toArray());
-    }
+    }*/
 
     private static QueryAction handleSelect(Client client, Select select) {
         if (select.isAgg) {

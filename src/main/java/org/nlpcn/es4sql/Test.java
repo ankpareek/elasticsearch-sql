@@ -33,7 +33,7 @@ public class Test {
     }
 
     public static void main(String[] args) throws Exception {
-        String sql = "SELECT u as u2,count(distinct(mid)) as count FROM panda_quality where ty='buffer' and day='20160816' and tm>1471312800.00 and tm<1471313100.00 and domain='http://pl10.live.panda.tv' group by u  order by count desc limit 5000";
+//        String sql = "SELECT u as u2,count(distinct(mid)) as count FROM panda_quality where ty='buffer' and day='20160816' and tm>1471312800.00 and tm<1471313100.00 and domain='http://pl10.live.panda.tv' group by u  order by count desc limit 5000";
 //        sql = "SELECT sum(num) as num2,newtype as nt  from  twitter2 group by nt  order by num2 ";
 //        System.out.println("sql" + sql + ":\n" + sqlToEsQuery(sql));
 //
@@ -78,13 +78,15 @@ public class Test {
 //        sql = "SELECT split(trim(concat_ws('dd',newtype,num_d)),'dd')[0] as nt from  twitter2 ";
 //        System.out.println("sql" + sql + ":\n----------\n" + sqlToEsQuery(sql));
 
-        sql = "SELECT floor(" +
+        String sql ="select * from locs,abc where nested(itineraries.rooms.hotelBookingId, itineraries) = 'ABC' and travelers.fullname like '%David Dao' UNION ALL select * from abcdef where nested(itineraries.rooms.hotelBookingId, itineraries) = 'ABC' and travelers.fullname like '%David Dao' ";
+//
+      /*  sql = "SELECT floor(" +
                 "floor(substring(newtype,0,14)/100)/5)*5 as key," +
                 "count(distinct(num)) cvalue FROM twitter2 " +
                 "group by key ";
         String TEST_INDEX = "elasticsearch-sql_test_index";
 
-        sql =  "select * from xxx/locs where 'a' = 'b' and a > 1";
+        sql =  "select * from xxx/locs where 'a' = 'b' and a > 1";*/
 
         System.out.println("sql" + sql + ":\n----------\n" + sqlToEsQuery(sql));
 

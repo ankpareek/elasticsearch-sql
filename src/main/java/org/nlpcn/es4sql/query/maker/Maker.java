@@ -173,7 +173,7 @@ public abstract class Maker {
 				// TODO, maybe use term filter when not analayzed field avalaible to make exact matching?
 				// using matchPhrase to achieve equallity.
 				// matchPhrase still have some disatvantegs, f.e search for 'word' will match 'some word'
-				x = QueryBuilders.matchPhraseQuery(name, value);
+				x = QueryBuilders.termsQuery(name, value);
 
 				break;
 			}
@@ -182,6 +182,21 @@ public abstract class Maker {
 			String queryStr = ((String) value);
             queryStr = queryStr.replace('%', '*').replace('_', '?');
             queryStr = queryStr.replace("&PERCENT","%").replace("&UNDERSCORE","_");
+            if(queryStr.startsWith("*") && queryStr.endsWith("*")) {
+                x = QueryBuilders.wildcardQuery(name, queryStr);;
+                break;
+            }
+            else if(queryStr.endsWith("*") && !queryStr.contains("?")) {
+                queryStr = queryStr.replace("*","");
+                x = QueryBuilders.prefixQuery(name, queryStr);
+                break;
+            }
+            else if(queryStr.startsWith("*") && !queryStr.contains("?")) {
+                queryStr = queryStr.replace("*","");
+                String reverseQuery = new StringBuffer(queryStr).reverse().toString();
+                x = QueryBuilders.prefixQuery(name, reverseQuery);
+                break;
+            }
 			x = QueryBuilders.wildcardQuery(name, queryStr);
 			break;
         case REGEXP:
